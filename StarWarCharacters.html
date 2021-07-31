@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background-color: #202020;
+        color: white;
+      }
+      .searchBox {
+        width: 50vw;
+        min-width: 250px;
+        margin: 10vh auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      input {
+        width: 400px;
+        padding: 10px;
+        border-radius: 15px;
+        outline: none;
+        border: none;
+      }
+      .input {
+        z-index: 1;
+      }
+      #characters {
+        position: absolute;
+        padding: 35px 10px 0px;
+        width: 400px;
+        max-height: 300px;
+        border-radius: 24px;
+        border: 1px solid rgb(133, 238, 133);
+        border-top: none;
+        visibility: hidden;
+        overflow-y: scroll;
+      }
+      #characters::-webkit-scrollbar {
+        width: 6px;
+        border-radius: 3px;
+      }
+      #characters::-webkit-scrollbar-thumb {
+        background-color: rgb(133, 238, 133);
+        border-radius: 10px;
+      }
+      #characters div {
+        display: flex;
+        border-top: 1px solid rgb(82, 111, 82);
+        justify-content: space-between;
+        padding: 10px 5px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      #characters div:hover {
+        background-color: rgb(82, 111, 82);
+      }
+      #loading {
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        margin-top: 4px;
+        margin-left: -31px;
+        visibility: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="searchBox">
+      <div class="input">
+        <input
+          oninput="throttleFn()"
+          type="text"
+          id="query"
+          placeholder="Search"
+        />
+        <img src="./img/Spinner-1.gif" id="loading" />
+      </div>
+      <div id="characters"></div>
+    </div>
+  </body>
+</html>
+
+<script>
+  let characters_div = document.getElementById("characters");
+  let loading = document.getElementById("loading");
+
+  let timerId;
+
+  function throttleFn() {
+    loading.style.visibility = "visible";
+    //If timeout is already set, then do not make req.
+    if (timerId) {
+      return false;
+    }
+
+    timerId = setTimeout(() => {
+      loading.style.visibility = "hidden";
+      main();
+      timerId = undefined; //After completing timeOut, id will be undefined, which will make above If condition false and allow to set new Timeout
+    }, 1000);
+  }
+
+  async function main() {
+    let query = document.getElementById("query").value;
+    if (query.length > 0) {
+      characters_div.innerHTML = null;
+      characters_div.style.visibility = "visible";
+      let characters = await searchcharacters(); // Returned array will be a promise;
+      appendcharacters(characters); // Add results to the div;
+    } else {
+      characters_div.style.visibility = "hidden";
+    }
+  }
+
+  async function searchcharacters() {
+    let query = document.getElementById("query").value;
+
+    let res = await fetch(`https://swapi.dev/api/people/?search=${query}`);
+    let data = await res.json();
+    console.log("data:", data.results);
+    return data.results; //returning character result array;
+  }
+
+  function appendcharacters(d) {
+    if (d.length == 0) {
+      let p_error = document.createElement("p");
+      p_error.innerHTML = "No Match Found";
+      p_error.style.fontSize = "30px";
+      p_error.style.textAlign = "center";
+      characters_div.append(p_error);
+    } else {
+      d.forEach((el) => {
+        let div = document.createElement("div");
+        div.addEventListener("click", () => {
+          charDetails(el);
+        });
+
+        let p_name = document.createElement("span");
+        p_name.innerHTML = el.name;
+
+        let p_gender = document.createElement("span");
+        p_gender.innerHTML = el.gender;
+
+        div.append(p_name, p_gender);
+
+        characters_div.append(div);
+      });
+    }
+  }
+
+  charDetails = (el) => {
+    console.log("el:", el);
+  };
+</script>

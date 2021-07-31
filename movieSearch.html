@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        background-color: #202020;
+        color: white;
+      }
+      .searchBox {
+        width: 50vw;
+        min-width: 250px;
+        margin: 10vh auto;
+        display: flex;
+        flex-direction: column;
+        /* justify-content: center; */
+        align-items: center;
+      }
+      input {
+        width: 250px;
+        padding: 10px;
+        border-radius: 15px;
+        outline: none;
+        border: none;
+      }
+      #movies {
+        width: 250px;
+        max-height: 300px;
+        border: 1px solid white;
+        border-top: none;
+        visibility: hidden;
+        overflow-y: scroll;
+      }
+      #movies p {
+        padding: 10px 5px;
+        cursor: pointer;
+        transition: 0.3s;
+      }
+      #movies p:hover {
+        background-color: #2e2c2c;
+      }
+      #loading {
+        position: absolute;
+        width: 25px;
+        height: 25px;
+        border-radius: 50%;
+        margin-top: 4px;
+        margin-left: -31px;
+        visibility: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="searchBox">
+      <div class="input">
+        <input
+          oninput="throttleFn()"
+          type="text"
+          id="query"
+          placeholder="Search"
+        />
+        <img src="./img/Spinner-1.gif" id="loading" />
+      </div>
+      <div id="movies"></div>
+    </div>
+  </body>
+</html>
+
+<script>
+  let movies_div = document.getElementById("movies");
+  let loading = document.getElementById("loading");
+
+  let timerId;
+
+  function throttleFn() {
+    loading.style.visibility = "visible";
+    //If timeout is already set, then do not make req.
+    if (timerId) {
+      return false;
+    }
+
+    timerId = setTimeout(() => {
+      loading.style.visibility = "hidden";
+      main();
+      timerId = undefined; //After completing timeOut, id will be undefined, which will make above If condition false and allow to set new Timeout
+    }, 1000);
+  }
+
+  async function searchMovies() {
+    let query = document.getElementById("query").value;
+
+    //To minimize the api requests;
+    if (query.length <= 2) {
+      return false;
+    }
+
+    let res = await fetch(`http://www.omdbapi.com/?apikey=d23588f&s=${query}`);
+    let data = await res.json();
+    // console.log("data:", data);
+    return data.Search; //returning movie result array;
+  }
+
+  async function main() {
+    movies_div.innerHTML = null;
+    let movies = await searchMovies(); // Returned array will be a promise;
+    appendMovies(movies); // Add results to the div;
+  }
+
+  function appendMovies(d) {
+    movies_div.style.visibility = "visible";
+    if (d == undefined) {
+      let p_error = document.createElement("p");
+      p_error.innerHTML = "No Match Found";
+      movies_div.append(p_error);
+    } else {
+      d.forEach(({ Title }) => {
+        let p_title = document.createElement("p");
+        p_title.innerHTML = Title;
+        //   p_title.addEventListener("mouseover", () => {
+        //     document.getElementById("query").value = Title;
+        //   });
+        movies_div.append(p_title);
+      });
+    }
+  }
+</script>
