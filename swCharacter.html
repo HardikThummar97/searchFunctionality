@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>swCharacter</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        /* background-color: #202020; */
+        color: rgb(252, 248, 6);
+        font-weight: bold;
+        background-image: url(./img/logo2.jpg);
+        background-repeat: no-repeat;
+        background-size: cover;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      #charDetail {
+        width: 60vw;
+        /* height: 60vh; */
+        margin: auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+      }
+      #charDetail > h1,
+      #charDetail > p {
+        width: 30%;
+        padding: 5px;
+        margin: 5px;
+        display: flex;
+      }
+      h1 {
+        justify-content: center;
+      }
+      p {
+        justify-content: space-between;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="charDetail"></div>
+  </body>
+</html>
+<script>
+  let char_div = document.getElementById("charDetail");
+  let detail = JSON.parse(localStorage.getItem("charDetail"));
+  console.log("detail:", detail);
+
+  let h1 = document.createElement("h1");
+  h1.innerHTML = detail.name;
+
+  let p_gender = document.createElement("p");
+  p_gender.innerHTML = `Gender: <span>${detail.gender}</span>`;
+
+  let p_birth = document.createElement("p");
+  p_birth.innerHTML = `Birth Year: <span>${detail.birth_year}</span>`;
+
+  let p_height = document.createElement("p");
+  p_height.innerHTML = `Height: <span>${detail.height}</span>`;
+
+  let p_hair = document.createElement("p");
+  p_hair.innerHTML = `Hair color: <span>${detail.hair_color}</span>`;
+
+  let p_skin = document.createElement("p");
+  p_skin.innerHTML = `Skin color: <span>${detail.skin_color}</span>`;
+
+  let p_eye = document.createElement("p");
+  p_eye.innerHTML = `Eye color: <span>${detail.eye_color}</span>`;
+
+  char_div.append(h1, p_gender, p_birth, p_height, p_skin, p_hair, p_eye);
+</script>

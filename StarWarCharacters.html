@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>swCharacters</title>
     <style>
       * {
         margin: 0;
@@ -12,8 +12,12 @@
         box-sizing: border-box;
       }
       body {
-        background-color: #202020;
-        color: white;
+        /* background-color: #202020; */
+        color: rgb(252, 248, 6);
+        font-weight: bold;
+        background-image: url(./img/logo2.jpg);
+        background-repeat: no-repeat;
+        background-size: cover;
       }
       .searchBox {
         width: 50vw;
@@ -39,7 +43,7 @@
         width: 400px;
         max-height: 300px;
         border-radius: 24px;
-        border: 1px solid rgb(133, 238, 133);
+        border: 2px solid rgb(133, 238, 133);
         border-top: none;
         visibility: hidden;
         overflow-y: scroll;
@@ -158,7 +162,9 @@
     }
   }
 
-  charDetails = (el) => {
-    console.log("el:", el);
+  let charDetails = (el) => {
+    localStorage.setItem("charDetail", JSON.stringify(el));
+    window.location.href = "swCharacter.html";
+    // console.log("el:", el);
   };
 </script>
